@@ -1,0 +1,251 @@
+daysUntilEvac = 21
+alive = True
+escaped = False
+food = 5
+health = 100
+day = 0
+scavenge = 0
+scavloot = 0
+sombies = 0
+fight = 0
+fightnum = 0
+foodcolour = 0
+healthcolour = 0
+event = 0
+event2 = "Z"
+morals = 0
+escaping = 0
+car = False
+oldman = True
+zombiekills = 0
+
+import random
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+print("you are a survivor of the zombie apocalypse. your wife and kids are missing and all you have is a bag of marshmallows and a can of soup. you'll make it work!")
+while escaped == False and alive == True:
+    daysUntilEvac = daysUntilEvac - 1
+    day = day + 1
+
+    if food == 0:
+        health = health - 50
+    if food > 0:
+        food = food - 1
+    if food < 4:
+        foodcolour = bcolors.FAIL
+    elif food > 3.5 and food < 8:
+        foodcolour = bcolors.WARNING
+    elif food > 7.5:
+        foodcolour = bcolors.OKGREEN
+    if health == 0:
+        healthcolour = bcolors.FAIL
+    elif health == 50:
+        healthcolour = bcolors.WARNING
+    elif health == 100:
+        healthcolour = bcolors.OKGREEN
+
+
+    
+    print("    ")
+    print("---------- DAY " + str(day) + " ----------")
+    if daysUntilEvac > 0:
+        print(bcolors.OKBLUE + str(daysUntilEvac) + " days until evac." + bcolors.ENDC)
+    elif daysUntilEvac < 1 and daysUntilEvac > -4:
+        print(bcolors.OKBLUE + "the area is being evacuated" + bcolors.ENDC)
+    else:
+        print(bcolors.OKBLUE + "the military has abandoned you." + bcolors.ENDC)
+    print(foodcolour + str(food) + " food remaining" + bcolors.ENDC) #make these different colours
+    print(healthcolour + str(health) + " health remaining" + bcolors.ENDC)
+    if food < 1:
+        print("you are starving.")
+
+    print("    ")
+    scavenge = input("do you want to scavenge? (Y/N) :")
+    if scavenge.upper() == "Y":
+        scavloot = random.randint(0,4)
+        sombies = random.randint(1,7)
+        
+        if day == 6:
+            event = input("you find an old man with a large amount of food. do you want to kill him and steal it, or return home? (K/R): ")
+            if event.upper() == "K":
+                print("you went full jesse james on the old codger and stole his food.")
+                food = food + 7
+                morals = morals - 20
+                oldman = False
+            else:
+                print("you left the old man alone.")
+                morals = morals + 5
+
+        elif day == 8:
+            event2 = input("you encounter a group of raiders while scavenging, who have a vast amount of stolen food. do you want to attack them and take it for yourself, attack them and return the food to the community it was stolen from, or ignore them? (Y/C/L): ")
+            if event2.upper() == "Y":
+                print("you shot the raiders and stole 20 food from them")
+                food = food + 20
+                morals = morals - 20
+            elif event2.upper() == "C":
+                print(bcolors.OKGREEN + "you shot the raiders and stole 20 food from them. you returned this food to the community it was stolen from. They gave you 5 food as payment." + bcolors.ENDC)
+                food = food + 5
+                morals = morals + 30
+            else:
+                print("you left the raiders alone. You found 1 food.")
+                morals = morals - 5
+                food = food + 1
+
+        elif day == 13:
+            event = input("you find a boy stuck up a tree. 5 zombies are at the bottom of the tree trying to kill him. do you want to try to save him, or leave him behind? (S/L): ")
+            sombies = 5
+            if event.upper() == "S":
+                morals = morals + 10
+                fightnum = random.randint(1,10)
+                if fightnum <= sombies:
+                    health = health - 50
+                    print(bcolors.FAIL + "you lost the fight and were injured. the boy was killed." + bcolors.ENDC)
+                elif fightnum >= sombies:
+                    zombiekills = zombiekills + 5
+                    food = food + scavloot
+                    print(bcolors.OKGREEN + "you won the fight and saved the boy. he gave you his teddy bear before running directly into a horde of zombies and dying." + bcolors.ENDC)
+            else:
+                print("you ran away and left the boy to die. he is displeased at this news and starts crying.")
+                morals = morals - 5
+                food = food + 1
+
+        else:
+            print("    ")
+            print("you find " + str(scavloot) + " food and " + str(sombies) + " tsombies.")
+            fight = input("run or fight? (R/F) :")
+            if fight.upper() == "F": 
+                fightnum = random.randint(1,10)
+                if fightnum <= sombies:
+                    health = health - 50
+                    print(bcolors.FAIL + "you lost the fight and were injured." + bcolors.ENDC)
+                elif fightnum >= sombies:
+                    food = food + scavloot
+                    print(bcolors.OKGREEN + "you won the fight and escaped with " + str(scavloot) + " food." + bcolors.ENDC)
+                    zombiekills = zombiekills + sombies
+            else: 
+                print("you ran away.")
+
+                #make the imput case insensitive
+                
+                
+
+
+        
+    
+
+    if daysUntilEvac < 1 and daysUntilEvac > -4:
+        escaping = input(bcolors.OKBLUE + "the military is evacuating the area. do you want to evacuate? (Y/N): " + bcolors.ENDC)
+        if escaping.upper() == "Y":
+            if oldman == True:
+                escaped = True
+            if oldman == False:
+                escaped = False
+                print(bcolors.FAIL + "the military refuse to evacuate you for murdering an old man. can't blame them." + bcolors.ENDC)
+    if day > 28:
+        escaping = input("a bald man says that he will sell his car to you for 10 cans of food. do you want to accept? (Y/N): ")
+        if escaping.upper() == "Y":
+            if food >= 10:
+                escaped = True
+                car = True
+            if food < 10:
+                print("you don't have enough food to trade. the bald man starts crying.")
+        else:
+            print("the bald man cries because of your rejection.")
+        
+
+    if health < 5:
+        alive = False
+
+if escaped == True:
+    if car == False:
+        print("      ")
+        print(bcolors.OKBLUE + "---------- THE END ----------")
+        print(str(morals) + " moral points.")
+        print("you were evacuated. you lived out the rest of your days miserably making minimum wage in an office.")
+    elif car == True:
+        if morals > 40 and oldman == True:
+            print("      ")
+            print(bcolors.OKCYAN + "---------- THE END ----------")
+            print(str(morals) + " moral points.")
+            print("you escaped. after finding 600 million USD in the back of the car for no apparent reason, you lived out the rest of your days in hawaii, drinking pina coladas and dancing to bongo music like an able-bodied madge harvey.")
+
+        elif morals > -1 and oldman == True:
+            print("      ")
+            print(bcolors.OKCYAN + "---------- THE END ----------")
+            print(str(morals) + " moral points.")
+            print("you escaped. you lived out the rest of your days working on a construction site, before falling off a ladder and breaking your spine in 9 places. unfortunate.")
+
+        elif morals < 0 and oldman == False:
+            print("      ")
+            print(bcolors.OKBLUE + "---------- THE END ----------")
+            print(str(morals) + " moral points.")
+            print("you escaped. you were arrested two years later for the murder of the old man. after your sentence was served, you lived out the rest of your days sitting on a rocking chair and grumbling angrily at your neighbours. at the ripe old age of 81, a bald man went full jesse james on you and stole your food")
+        
+        elif morals < -19 and oldman == True:
+            print("      ")
+            print(bcolors.OKBLUE + "---------- THE END ----------")
+            print(str(morals) + " moral points.")
+            print("you escaped. you lived out the rest of your days sitting on a rocking chair and grumbling angrily at your neighbours. at the ripe old age of 81, they ganged up on you and flung you off a bridge for being a tosser. ")
+
+        elif morals > -1 and oldman == False:
+            print("  ")
+            print(bcolors.OKBLUE + "---------- THE END ----------")
+            print(str(morals) + " moral points.")
+            print("you escaped. you managed to escape the law and move to canada, where you lived in a cabin until you were eaten by a bear at the ripe old age of 81.")
+        
+
+if alive == False:
+
+    if daysUntilEvac > 0:
+        print("      ")
+        print(bcolors.FAIL + "---------- THE END ----------")
+        print(str(morals) + " moral points.")
+        print("you failed to survive until evacuation. you died.")
+
+    if daysUntilEvac < 1:
+        print("      ")
+        print(bcolors.FAIL + "---------- THE END ----------")
+        print(str(morals) + " moral points.")
+        print("you failed to survive. you died.")
+
+print("  ")
+if oldman == True:
+    print("the old man survived the apocalypse. he now owns a convenience store with his wife.")
+
+elif oldman == False:
+    print("the old man was killed by you.")
+print("  ")
+if car == True:
+    if morals > -1:
+        print("the bald man escaped with his family. he sent you monthly postcards until he died at the age of 73")
+    elif morals < 0:
+        print("the bald man and his family died in the apocalypse.")
+elif car == False:
+        print("the bald man starved in the apocalypse")
+print("  ")
+if event2.upper() == "Y":
+    print("the community who's food you stole died in the apocalypse. they were killed by zombies.")
+elif event2.upper() == "C":
+    print("the community you helped survived the apocalypse. their leader added you on facebook.")
+elif event2.upper() == "Z":
+    print("the community you never met survived the apocalypse.")
+else:
+    print("the community who you abandoned died in the apocalypse. they were killed by raiders.")
+print("  ")
+print("the boy was killed by zombies" + bcolors.ENDC)
+        
+
+
+    
+    
+
